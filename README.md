@@ -5,6 +5,17 @@ This module performs the device trust validation and can be embedded in most Fun
 
 # How the trusted device validation works
 
+Every Azure AD joined or hybrid Azure AD joined device has a computer certificate that was enrolled when registering the device to Azure AD. This device specific computer certificate's public and private keys are available locally on the device, while the public key is known to Azure AD. The device trust validation functionality occurs in the following scenarios:
+
+- Client-side data gathering
+- Function App data validation
+
+## Client-side
+
+On the client-side, a signature hash using the private key of the computer certificate is calculated and sent encoded as a Base64 string to the Function App including the Azure AD device identifier (the common name of the computer certificate), the public key as a byte array encoded as a Base64 string together with the computer certificate thumbprint. These data strings are sent all together as parameter input when calling the Function App API
+
+## Function App
+
 To be added...
 
 # How to use this module in a Function App
