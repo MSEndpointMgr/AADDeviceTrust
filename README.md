@@ -17,4 +17,8 @@ Enable the module to be installed as a managed dependency by editing your requir
 }
 ```
 
+Another option would also be to clone this module from GitHub and include it in the modules folder of your Function App, to embedd it directly and not have a dependency to PSGallery.
+
+# Usage of module within a Function App
+
 For a full sample Function App function, look at the code in \Samples\FunctionApp-MSI.ps1 in this repo.
