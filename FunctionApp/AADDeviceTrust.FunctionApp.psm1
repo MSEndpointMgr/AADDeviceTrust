@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Script that initiates the AADDeviceTrust module
+    Script that initiates the AADDeviceTrust.FunctionApp module
 
 .NOTES
     Author:      Nickolaj Andersen
