@@ -13,6 +13,9 @@
     1.0.0 - (2022-03-14) Script created
 #>
 Process {
+    # Install required modules
+    Install-Module -Name "AADDeviceTrust.Client" -AcceptLicense -Force
+
     # Use TLS 1.2 connection when calling Azure Function
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
