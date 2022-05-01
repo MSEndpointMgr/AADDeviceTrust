@@ -19,11 +19,28 @@ On the client-side, a signature hash using the private key of the computer certi
 To be added...
 
 # How to use AADDeviceTrust.Client module in a client-side script
+Ensure the AADDeviceTrust.Client module is installed on the device prior to running the sample code below. Use the `Test-AzureADDeviceRegistration` function to ensure the device where the code is running on fulfills the device registration requirements. Then use the `New-AADDeviceTrustBody` function to automatically generate a hash-table object containing the gathered data required for the body of the request. Finally, use built-in `Invoke-RestMethod` cmdlet to invoke the request against the Function App, passing the gathered data to be validated by the Function App, if the request comes from a trusted device.
 
-To be added...
+```PowerShell
+if (Test-AzureADDeviceRegistration -eq $true) {
+    # Create body for Function App request
+    $BodyTable = New-AADDeviceTrustBody
+
+    # Extend body table with custom data to be processed by Function App
+    # ...
+
+    # Send log data to Function App
+    $URI = "https://<function_app_name>.azurewebsites.net/api/<function_name>?code=<function_key>"
+    Invoke-RestMethod -Method "POST" -Uri $URI -Body ($BodyTable | ConvertTo-Json) -ContentType "application/json"
+}
+else {
+    Write-Warning -Message "Script is not running on an Azure AD joined or hybrid Azure AD joined device"
+}
+```
+
+For a full sample of the client-side script, explore the code in \Samples\ClientSide.ps1 in this repo.
 
 # How to use AADDeviceTrust.FunctionApp module in a Function App
-
 Enable the module to be installed as a managed dependency by editing your requirements.psd1 file of the Function App, e.g. as shown below:
 
 ```PowerShell
@@ -34,4 +51,4 @@ Enable the module to be installed as a managed dependency by editing your requir
 
 Another option would also be to clone this module from GitHub and include it in the modules folder of your Function App, to embedd it directly and not have a dependency to PSGallery.
 
-For a full sample Function App function, look at the code in \Samples\FunctionApp-MSI.ps1 in this repo.
+For a full sample Function App function, explore the code in \Samples\FunctionApp-MSI.ps1 in this repo.
