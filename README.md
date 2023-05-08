@@ -45,7 +45,7 @@ Enable the module to be installed as a managed dependency by editing your requir
 
 ```PowerShell
 @{
-    'AADDeviceTrust' = '1.*'
+    'AADDeviceTrust.FunctionApp' = '1.*'
 }
 ```
 
