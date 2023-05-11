@@ -44,7 +44,7 @@ function Get-AzureADDeviceID {
                     return $AzureADDeviceID
 
                     } else {
-                    # Last ditch effort, try and use the ThumbPrint itself.
+                    # Last ditch effort, try and use the ThumbPrint (reg key) itself.
                     $AzureADDeviceID=$AzureADJoinInfoThumbprint
                     return $AzureADDeviceID
 
