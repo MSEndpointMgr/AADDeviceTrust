@@ -1,11 +1,11 @@
 # Overview
-When building a Function App API in Azure that accepts incoming HTTP requests from an Azure AD joined devices, being able to validate such a request is only coming from a trusted device in a given Azure AD tenant adds extensive security to the API. By default, the Function App can be configured to only accept incoming requests with a valid client certificate, which is a good security practice. Although, there's also another option to enhance the security of a Function App in terms of validating the incoming request, using the certificate enrolled to the device when it first registered itself with Azure AD.
+When building a Function App API in Azure that accepts incoming HTTP requests from Azure AD joined devices, being able to validate such a request is only coming from a trusted device in a given Azure AD tenant adds extensive security to the API. By default, the Function App can be configured to only accept incoming requests with a valid client certificate, which is a good security practice. Although, there's also another option to enhance the security of a Function App in terms of validating the incoming request, using the certificate enrolled to the device when it first registered itself with Azure AD.
 
 This module performs the device trust validation and can be embedded in most Function Apps where enhanced request validation is required.
 
 # How the trusted device validation works
 
-Every Azure AD joined or hybrid Azure AD joined device has a computer certificate that was generated when registering the device to Azure AD. This device specific computer certificate's public and private keys are available locally on the device. When registering the device, a special field called the ["alternativeSecurityIds"](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dvrj/f900e812-8f1c-4345-9ab0-b91111068651) is added to the Device's Azure record which contains a "key" field with a value that is a Base64 encoded representation of that SAME key pairs SHA1 Thumbprint, as well as the entire public keys SHA1 hash.
+Every Azure AD joined or hybrid Azure AD joined device has a computer certificate that was generated when registering the device to Azure AD. This device specific computer certificate's public and private keys are available locally on the device. When registering the device, a special field called the ["alternativeSecurityIds"](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dvrj/f900e812-8f1c-4345-9ab0-b91111068651) is added to the Device's Azure record which contains a "key" field with a value that is a Base64 encoded representation of that same private/public key pairs SHA1 Thumbprint, as well as the entire public keys SHA1 hash.
 
 The device trust validation functionality occurs in the following scenarios:
 
@@ -14,26 +14,26 @@ The device trust validation functionality occurs in the following scenarios:
 
 ## Client-side
 
-On the client-side, a signature hash using the private key of the computer certificate is calculated and sent encoded as a Base64 string to the Function App including the Azure AD device identifier (the common name of the computer certificate), the public key as a byte array encoded as a Base64 string together with the computer certificate thumbprint. These data strings are sent all together as parameter input when calling the Function App API
-
 On the client side, a table of information is built which will both serve to carry the data needed to authenticate to our Function App, as well as any other payload required for your specific needs. By default, this table contains...
 
 * The devices name.
-* The devices Azure AD ID which was pulled from the devices registry.
-* The thumbprint of the certificate used when registering to Azure AD. This was also pulled from the devices registry.
+* The devices Azure AD ID.
+* The thumbprint of the certificate used when registering to Azure AD.
 * A copy of the computers public certificate which has been turned into a byte array then encoded as a Base64 string for ease of transport.
-* And last but not least, a signature generated from the SHA256 hash of the devices Azure ID made using the devices private certificate. The private certificate was located by looking for the correspondiing thumbprint in the computers certificate store. 
+* And last but not least, a signature generated from the SHA256 hash of the devices Azure ID wihch was signed using the devices private certificate.
 
-...And again, all of that data will be passed to the Function App along with any other data you add. Details on how to add more in the use section.
+...And again, all of that data will be passed to the Function App along with any other data you add. Details on how to add more fields can be found in the use section.
 
-Note: The signature is *not* an encrypted form of the SHA256 hash of the devices Azure ID, nor does it contian the hash at all. It is meerely a method to validate and authenticate a SHA256 hash, and thus the chunk of data it represents, when combined with the public certificate.
+Note: The signature is *not* an encrypted form of the SHA256 hash of the devices Azure ID, nor does it contian the hash of the Azure ID at all. It also does not contain the Private key. It is meerely a method to validate and authenticate a SHA256 hash, and thus the chunk of data it represents, when combined with the public certificate. How this comes into play is explained in the next section.
 
 
 ## Function App
 
-When the Function App receieves a request, it will start by pulling the various information sent by the client out of the body of the request. The Function App will then use it's Graph permissions **(Device.Read.All is required)** to pull the full Azure AD record for the Azure AD Device ID provided in the request.
+When the Function App receieves a request, it will start by pulling the various information sent by the client out of the body of the request. The Function App will then use it's Graph permissions* to pull the full Azure AD record for the Azure AD Device ID provided in the request. As mentioned, this record contains a "alternativeSecurityIds" field with a key value that has a base64 represenation of the SHA1 thumbprint and SHA1 hash of the full X.509 public certificate used when the machine originally registered.
 
-1. As mentioned, this record contains a "alternativeSecurityIds" field with a key value that has a base64 represenation of the devices public ceritificates SHA1 thumbprint and, a SHA1 hash of the full X.509 public certificate. The authentication then starts by confirming the SAHA1 thumbprint provided in our request matches the SHA1 thumbprint stored in the alternativeSecurityIds/keys field. Technically, we didn't extract the hash from the key, but rather we provided it as a seperate field. Still, this confirms we at least know the correct thumnbprint.
+***Function App needs Device.Read.All permissions**
+
+1. The authentication then starts by confirming the SHA1 thumbprint provided in our request matches the SHA1 thumbprint stored in the alternativeSecurityIds/keys field. Technically, we didn't extract the hash from the key, but rather we provided it as a seperate field. Still, this confirms we at least know the correct thumnbprint.
 
 2. Next, we confirm that the full SHA1 hash of the X.509 public cert that was provided matches the SHA1 hash of the devices public cert that was stored again in the alternativeSecurityIds/keys field. At this point, we know the public certificate provided is not just related to the same private certificate, but is indeed the exact same public certificate originally made when the device was registered.
 
