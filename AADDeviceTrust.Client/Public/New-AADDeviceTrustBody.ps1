@@ -13,10 +13,11 @@ function New-AADDeviceTrustBody {
         Author:      Nickolaj Andersen
         Contact:     @NickolajA
         Created:     2022-03-14
-        Updated:     2022-03-14
+        Updated:     2023-05-10
 
         Version history:
         1.0.0 - (2022-03-14) Script created
+        1.0.1 - (2023-05-10) @AzureToTheMax - Updated to no longer use Thumbprint field, now redundant.
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param()
@@ -32,7 +33,7 @@ function New-AADDeviceTrustBody {
             DeviceName = $env:COMPUTERNAME
             DeviceID = $AzureADDeviceID
             Signature = $Signature
-            Thumbprint = $CertificateThumbprint
+            #Thumbprint = $CertificateThumbprint
             PublicKey = $PublicKeyBytesEncoded
         }
 
