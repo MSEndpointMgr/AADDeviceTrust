@@ -1,4 +1,4 @@
-function Get-AzureDeviceIDFromCertificate {
+function Get-AzureADDeviceIDFromCertificate {
      <#
     .SYNOPSIS
         Used to pull the Azure Device ID from the provided Base64 certificate.
