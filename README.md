@@ -29,7 +29,7 @@ Note: The signature is *not* an encrypted form of the SHA256 hash of the devices
 
 When the Function App receives a request, it will start by pulling the various information sent by the client out of the body of the request. 
 
-The first thing The Function App does is pull the devices Azure AD ID from the certificate provided. It will then use its Graph permissions* to pull the full Azure AD record for that Azure AD Device ID. As mentioned, this record contains a "alternativeSecurityIds" field with a key value that has a base64 representation of the SHA1 thumbprint and SHA1 hash of the full X.509 public certificate used when the machine originally registered.
+The first thing the Function App does is pull the devices Azure AD ID from the certificate provided. It will then use its Graph permissions* to pull the full Azure AD record for that Azure AD Device ID. As mentioned, this record contains a "alternativeSecurityIds" field with a key value that has a base64 representation of the SHA1 thumbprint and SHA1 hash of the full X.509 public certificate used when the machine originally registered.
 
 ***Function App needs Device.Read.All permissions**
 
