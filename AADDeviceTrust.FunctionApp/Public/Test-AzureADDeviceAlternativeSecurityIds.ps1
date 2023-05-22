@@ -19,11 +19,11 @@ function Test-AzureADDeviceAlternativeSecurityIds {
         Author:      Nickolaj Andersen
         Contact:     @NickolajA
         Created:     2021-06-07
-        Updated:     2023-02-10
+        Updated:     2023-05-10
     
         Version history:
         1.0.0 - (2021-06-07) Function created
-        1.0.1 - (2023-02-10) @AzureToTheMax
+        1.0.1 - (2023-05-10) @AzureToTheMax
             1. Updated Thumbprint compare to use actual PEM cert via X502 class rather than simply a passed and separate thumbprint value.
             2. Updated Hash compare to use full PEM cert via the X502 class, pull out just the public key data, and compare from that like before.
 
