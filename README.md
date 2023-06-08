@@ -62,6 +62,7 @@ if (Test-AzureADDeviceRegistration -eq $true) {
 
     # Extend body table with custom data to be processed by Function App
     $BodyTable.Add("Key", "Value") # Example only. This format works for most situations. 
+    $BodyTable.Add("Key2", "$($Value)") # Example only. This format works for most situations involving simple variables.
     $BodyTable.Add("EmbededPSObject", $EmbededPSObject) # Other situations such as embedding a PSObject/JSON may need alternate formatting such as this.
 
     # Send log data to Function App
