@@ -10,11 +10,13 @@ function Get-AzureADDeviceID {
         Author:      Nickolaj Andersen
         Contact:     @NickolajA
         Created:     2021-05-26
-        Updated:     2021-05-26
+        Updated:     2023-06-20
     
         Version history:
         1.0.0 - (2021-05-26) Function created
         1.0.1 - (2022-10-20) @AzureToTheMax - Fixed issue pertaining to Cloud PCs (Windows 365) devices ability to locate their AzureADDeviceID.
+        1.0.2 - (2023-06-20) @AzureToTheMax - Fixed issue pertaining to Cloud PCs (Windows 365) devices where the reported AzureADDeviceID was in all capitals, breaking signature creation.
+
     #>
     Process {
         # Define Cloud Domain Join information registry path
@@ -28,6 +30,8 @@ function Get-AzureADDeviceID {
             if ($AzureADJoinCertificate -ne $null) {
                 # Determine the device identifier from the subject name
                 $AzureADDeviceID = ($AzureADJoinCertificate | Select-Object -ExpandProperty "Subject") -replace "CN=", ""
+                # Convert upper to lowercase.
+                $AzureADDeviceID = "$($AzureADDeviceID)".ToLower()
 
                 # Handle return value
                 return $AzureADDeviceID
@@ -40,12 +44,16 @@ function Get-AzureADDeviceID {
                     if ($AzureADJoinCertificate -ne $null){
                     # Cert is now found, extract Device ID from Common Name
                     $AzureADDeviceID = ($AzureADJoinCertificate | Select-Object -ExpandProperty "Subject") -replace "CN=", ""
+                    # Convert upper to lowercase.
+                    $AzureADDeviceID = "$($AzureADDeviceID)".ToLower()
                     # Handle return value
                     return $AzureADDeviceID
 
                     } else {
                     # Last ditch effort, try and use the ThumbPrint (reg key) itself.
                     $AzureADDeviceID=$AzureADJoinInfoThumbprint
+                    # Convert upper to lowercase.
+                    $AzureADDeviceID = "$($AzureADDeviceID)".ToLower()
                     return $AzureADDeviceID
 
                     }
