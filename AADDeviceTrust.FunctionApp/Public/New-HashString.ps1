@@ -17,6 +17,9 @@ function New-HashString {
     
         Version history:
         1.0.0 - (2021-08-23) Function created
+
+        #AzureToTheMax was here - this function does not appear to be used anywhere? If it is, it may need to be updated to accept a full PEM and use the X502 class like the others. 
+
     #>
     param(    
         [parameter(Mandatory = $true, HelpMessage = "Specify a Base64 encoded value for which a hash will be computed.")]

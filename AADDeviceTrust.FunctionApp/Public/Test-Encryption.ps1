@@ -19,10 +19,11 @@ function Test-Encryption {
         Author:      Nickolaj Andersen / Thomas Kurth
         Contact:     @NickolajA
         Created:     2021-06-07
-        Updated:     2021-06-07
+        Updated:     2023-05-10
     
         Version history:
         1.0.0 - (2021-06-07) Function created
+        1.0.1 - (2023-05-10) @AzureToTheMax - Updated to use full PEM cert via X502, extract the public key, and perform test like before using that.
 
         Credits to Thomas Kurth for sharing his original C# code.
     #>
@@ -40,8 +41,16 @@ function Test-Encryption {
         [string]$Content
     )
     Process {
-        # Convert from Base64 string to byte array
-        $PublicKeyBytes = [System.Convert]::FromBase64String($PublicKeyEncoded)
+
+        Write-Output "Using new X502 encryption test"
+        # Convert Value (cert) passed back to X502 Object
+        $X502 = [System.Security.Cryptography.X509Certificates.X509Certificate2]::New([System.Convert]::FromBase64String($PublicKeyEncoded))
+
+        # Pull out just the public key, removing extended values
+        $X502Pub = [System.Convert]::ToBase64String($X502.PublicKey.EncodedKeyValue.rawData)
+
+        # Convert encoded public key from Base64 string to byte array
+        $PublicKeyBytes = [System.Convert]::FromBase64String($X502Pub)
 
         # Convert signature from Base64 string
         [byte[]]$Signature = [System.Convert]::FromBase64String($Signature)

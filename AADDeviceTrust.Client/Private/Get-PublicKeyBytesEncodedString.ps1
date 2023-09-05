@@ -14,10 +14,11 @@ function Get-PublicKeyBytesEncodedString {
         Author:      Nickolaj Andersen / Thomas Kurth
         Contact:     @NickolajA
         Created:     2021-06-07
-        Updated:     2021-06-07
+        Updated:     2023-05-10
     
         Version history:
         1.0.0 - (2021-06-07) Function created
+        1.0.1 - (2023-05-10) @AzureToTheMax - Updated to use X509 for the full public key with extended properties in the PEM format
 
         Credits to Thomas Kurth for sharing his original C# code.
     #>
@@ -27,13 +28,18 @@ function Get-PublicKeyBytesEncodedString {
         [string]$Thumbprint
     )
     Process {
+
         # Determine the certificate based on thumbprint input
         $Certificate = Get-ChildItem -Path "Cert:\LocalMachine\My" -Recurse | Where-Object { $PSItem.Thumbprint -eq $Thumbprint }
         if ($Certificate -ne $null) {
-            # Get the public key bytes
-            [byte[]]$PublicKeyBytes = $Certificate.GetPublicKey()
+            # Bring the cert into a X509 object
+            $X509 = [System.Security.Cryptography.X509Certificates.X509Certificate2]::New($Certificate)
+            #Set the type of export to perform
+            $type = [System.Security.Cryptography.X509Certificates.X509ContentType]::Cert
+            #Export the public cert
+            $PublicKeyBytes = $X509.Export($type, "")
 
-            # Handle return value
+            # Handle return value - convert to Base64
             return [System.Convert]::ToBase64String($PublicKeyBytes)
         }
     }

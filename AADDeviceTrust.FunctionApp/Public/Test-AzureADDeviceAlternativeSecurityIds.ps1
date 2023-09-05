@@ -19,10 +19,14 @@ function Test-AzureADDeviceAlternativeSecurityIds {
         Author:      Nickolaj Andersen
         Contact:     @NickolajA
         Created:     2021-06-07
-        Updated:     2021-06-07
+        Updated:     2023-05-10
     
         Version history:
         1.0.0 - (2021-06-07) Function created
+        1.0.1 - (2023-05-10) @AzureToTheMax
+            1. Updated Thumbprint compare to use actual PEM cert via X502 class rather than simply a passed and separate thumbprint value.
+            2. Updated Hash compare to use full PEM cert via the X502 class, pull out just the public key data, and compare from that like before.
+
     #>
     param(
         [parameter(Mandatory = $true, HelpMessage = "Specify the alternativeSecurityIds.Key property from an Azure AD device record.")]
@@ -44,8 +48,13 @@ function Test-AzureADDeviceAlternativeSecurityIds {
         
         switch ($Type) {
             "Thumbprint" {
+                Write-Output "Using new X502 Thumbprint compare"
+
+                # Convert Value (cert) passed back to X502 Object
+                $X502 = [System.Security.Cryptography.X509Certificates.X509Certificate2]::New([System.Convert]::FromBase64String($Value))
+
                 # Validate match
-                if ($Value -match $AzureADDeviceAlternativeSecurityIds.Thumbprint) {
+                if ($X502.thumbprint -match $AzureADDeviceAlternativeSecurityIds.Thumbprint) {
                     return $true
                 }
                 else {
@@ -53,8 +62,16 @@ function Test-AzureADDeviceAlternativeSecurityIds {
                 }
             }
             "Hash" {
+                Write-Output "Using new X502 hash compare"
+
+                # Convert Value (cert) passed back to X502 Object
+                $X502 = [System.Security.Cryptography.X509Certificates.X509Certificate2]::New([System.Convert]::FromBase64String($Value))
+
+                # Pull out just the public key, removing extended values
+                $X502Pub = [System.Convert]::ToBase64String($X502.PublicKey.EncodedKeyValue.rawData)
+        
                 # Convert from Base64 string to byte array
-                $DecodedBytes = [System.Convert]::FromBase64String($Value)
+                $DecodedBytes = [System.Convert]::FromBase64String($X502Pub)
                 
                 # Construct a new SHA256Managed object to be used when computing the hash
                 $SHA256Managed = New-Object -TypeName "System.Security.Cryptography.SHA256Managed"

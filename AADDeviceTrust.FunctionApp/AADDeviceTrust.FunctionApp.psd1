@@ -42,7 +42,8 @@
                           "Get-AzureADDeviceRecord",
                           "New-HashString",
                           "Test-AzureADDeviceAlternativeSecurityIds",
-                          "Test-Encryption"
+                          "Test-Encryption",
+                          "Get-AzureADDeviceIDFromCertificate"
     )
     
     # Variables to export from this module
