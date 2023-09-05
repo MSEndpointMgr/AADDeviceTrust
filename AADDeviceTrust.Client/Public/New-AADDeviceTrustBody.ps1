@@ -1,10 +1,10 @@
 function New-AADDeviceTrustBody {
     <#
     .SYNOPSIS
-        Construct the body with the elements for a sucessful device trust validation required by a Function App that's leveraging the AADDeviceTrust.FunctionApp module.
+        Construct the body with the elements for a successful device trust validation required by a Function App that's leveraging the AADDeviceTrust.FunctionApp module.
 
     .DESCRIPTION
-        Construct the body with the elements for a sucessful device trust validation required by a Function App that's leveraging the AADDeviceTrust.FunctionApp module.
+        Construct the body with the elements for a successful device trust validation required by a Function App that's leveraging the AADDeviceTrust.FunctionApp module.
 
     .EXAMPLE
         .\New-AADDeviceTrustBody.ps1
