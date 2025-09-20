@@ -68,26 +68,26 @@ $PublicKey = $Request.Body.PublicKey
 # Initiate request handling
 Write-Output -InputObject "Initiating request handling for device named as '$($DeviceName)' with identifier: $($DeviceID)"
 
-# Retrieve Azure AD device record based on DeviceID property from incoming request body
-$AzureADDeviceRecord = Get-AzureADDeviceRecord -DeviceID $DeviceID -AuthToken $AuthToken
-if ($AzureADDeviceRecord -ne $null) {
-    Write-Output -InputObject "Found trusted Azure AD device record with object identifier: $($AzureADDeviceRecord.id)"
+# Retrieve Entra ID device record based on DeviceID property from incoming request body
+$EntraIDDeviceRecord = Get-EntraIDDeviceRecord -DeviceID $DeviceID -AuthToken $AuthToken
+if ($EntraIDDeviceRecord -ne $null) {
+    Write-Output -InputObject "Found trusted Entra ID device record with object identifier: $($EntraIDDeviceRecord.id)"
 
-    # Validate thumbprint from input request with Azure AD device record's alternativeSecurityIds details
-    if (Test-AzureADDeviceAlternativeSecurityIds -AlternativeSecurityIdKey $AzureADDeviceRecord.alternativeSecurityIds.key -Type "Thumbprint" -Value $Thumbprint) {
+    # Validate thumbprint from input request with Entra ID device record's alternativeSecurityIds details
+    if (Test-EntraIDDeviceAlternativeSecurityIds -AlternativeSecurityIdKey $EntraIDDeviceRecord.alternativeSecurityIds.key -Type "Thumbprint" -Value $Thumbprint) {
         Write-Output -InputObject "Successfully validated certificate thumbprint from inbound request"
 
-        # Validate public key hash from input request with Azure AD device record's alternativeSecurityIds details
-        if (Test-AzureADDeviceAlternativeSecurityIds -AlternativeSecurityIdKey $AzureADDeviceRecord.alternativeSecurityIds.key -Type "Hash" -Value $PublicKey) {
+        # Validate public key hash from input request with Entra ID device record's alternativeSecurityIds details
+        if (Test-EntraIDDeviceAlternativeSecurityIds -AlternativeSecurityIdKey $EntraIDDeviceRecord.alternativeSecurityIds.key -Type "Hash" -Value $PublicKey) {
             Write-Output -InputObject "Successfully validated certificate SHA256 hash value from inbound request"
 
-            $EncryptionVerification = Test-Encryption -PublicKeyEncoded $PublicKey -Signature $Signature -Content $AzureADDeviceRecord.deviceId
+            $EncryptionVerification = Test-Encryption -PublicKeyEncoded $PublicKey -Signature $Signature -Content $EntraIDDeviceRecord.deviceId
             if ($EncryptionVerification -eq $true) {
-                Write-Output -InputObject "Successfully validated inbound request came from a trusted Azure AD device record"
+                Write-Output -InputObject "Successfully validated inbound request came from a trusted Entra ID device record"
 
                 # Validate that the inbound request came from a trusted device that's not disabled
-                if ($AzureADDeviceRecord.accountEnabled -eq $true) {
-                    Write-Output -InputObject "Azure AD device record was validated as enabled"
+                if ($EntraIDDeviceRecord.accountEnabled -eq $true) {
+                    Write-Output -InputObject "Entra ID device record was validated as enabled"
 
                     #
                     #
@@ -96,31 +96,31 @@ if ($AzureADDeviceRecord -ne $null) {
                     #
                 }
                 else {
-                    Write-Output -InputObject "Trusted Azure AD device record validation for inbound request failed, record with deviceId '$($DeviceID)' is disabled"
+                    Write-Output -InputObject "Trusted Entra ID device record validation for inbound request failed, record with deviceId '$($DeviceID)' is disabled"
                     $StatusCode = [HttpStatusCode]::Forbidden
                     $Body = "Disabled device record"
                 }
             }
             else {
-                Write-Warning -Message "Trusted Azure AD device record validation for inbound request failed, could not validate signed content from client"
+                Write-Warning -Message "Trusted Entra ID device record validation for inbound request failed, could not validate signed content from client"
                 $StatusCode = [HttpStatusCode]::Forbidden
                 $Body = "Untrusted request"
             }
         }
         else {
-            Write-Warning -Message "Trusted Azure AD device record validation for inbound request failed, could not validate certificate SHA256 hash value"
+            Write-Warning -Message "Trusted Entra ID device record validation for inbound request failed, could not validate certificate SHA256 hash value"
             $StatusCode = [HttpStatusCode]::Forbidden
             $Body = "Untrusted request"
         }
     }
     else {
-        Write-Warning -Message "Trusted Azure AD device record validation for inbound request failed, could not validate certificate thumbprint"
+        Write-Warning -Message "Trusted Entra ID device record validation for inbound request failed, could not validate certificate thumbprint"
         $StatusCode = [HttpStatusCode]::Forbidden
         $Body = "Untrusted request"
     }
 }
 else {
-    Write-Warning -Message "Trusted Azure AD device record validation for inbound request failed, could not find device with deviceId: $($DeviceID)"
+    Write-Warning -Message "Trusted Entra ID device record validation for inbound request failed, could not find device with deviceId: $($DeviceID)"
     $StatusCode = [HttpStatusCode]::Forbidden
     $Body = "Untrusted request"
 }

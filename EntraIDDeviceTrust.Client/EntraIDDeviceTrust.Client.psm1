@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Script that initiates the AADDeviceTrust.FunctionApp module
+    Script that initiates the EntraIDDeviceTrust.Client module
 
 .NOTES
     Author:      Nickolaj Andersen
