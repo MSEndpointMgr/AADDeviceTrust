@@ -1,13 +1,13 @@
-function Get-AzureADDeviceRecord {
+function Get-EntraIDDeviceRecord {
     <#
     .SYNOPSIS
-        Retrieve an Azure AD device record.
+        Retrieve an Entra ID device record.
     
     .DESCRIPTION
-        Retrieve an Azure AD device record.
+        Retrieve an Entra ID device record.
 
     .PARAMETER DeviceID
-        Specify the Device ID of an Azure AD device record.
+        Specify the Device ID of an Entra ID device record.
 
     .PARAMETER AuthToken
         Specify a hash table consisting of the authentication headers.
@@ -23,7 +23,7 @@ function Get-AzureADDeviceRecord {
         1.0.1 - (2022-01-01) Added support for passing in the authentication header table to the function
     #>
     param(
-        [parameter(Mandatory = $true, HelpMessage = "Specify the Device ID of an Azure AD device record.")]
+        [parameter(Mandatory = $true, HelpMessage = "Specify the Device ID of an Entra ID device record.")]
         [ValidateNotNullOrEmpty()]
         [string]$DeviceID,
 

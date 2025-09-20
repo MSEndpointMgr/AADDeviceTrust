@@ -1,13 +1,13 @@
-function Get-AzureADDeviceAlternativeSecurityIds {
+function Get-EntraIDDeviceAlternativeSecurityIds {
     <#
     .SYNOPSIS
-        Decodes Key property of an Azure AD device record into prefix, thumbprint and publickeyhash values.
+        Decodes Key property of an Entra ID device record into prefix, thumbprint and publickeyhash values.
     
     .DESCRIPTION
-        Decodes Key property of an Azure AD device record into prefix, thumbprint and publickeyhash values.
+        Decodes Key property of an Entra ID device record into prefix, thumbprint and publickeyhash values.
 
     .PARAMETER Key
-        Specify the 'key' property of the alternativeSecurityIds property retrieved from the Get-AzureADDeviceRecord function.
+        Specify the 'key' property of the alternativeSecurityIds property retrieved from the Get-EntraIDDeviceRecord function.
     
     .NOTES
         Author:      Nickolaj Andersen
@@ -19,7 +19,7 @@ function Get-AzureADDeviceAlternativeSecurityIds {
         1.0.0 - (2021-06-07) Function created
     #>
     param(
-        [parameter(Mandatory = $true, HelpMessage = "Specify the 'key' property of the alternativeSecurityIds property retrieved from the Get-AzureADDeviceRecord function.")]
+        [parameter(Mandatory = $true, HelpMessage = "Specify the 'key' property of the alternativeSecurityIds property retrieved from the Get-EntraIDDeviceRecord function.")]
         [ValidateNotNullOrEmpty()]
         [string]$Key
     )
