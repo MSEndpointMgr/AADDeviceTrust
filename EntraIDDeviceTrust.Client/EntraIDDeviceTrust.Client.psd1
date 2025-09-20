@@ -26,7 +26,7 @@
     Copyright = '(c) 2022 Nickolaj Andersen. All rights reserved.'
     
     # Description of the functionality provided by this module
-    Description = 'Provides a set of functions to construct a valid header body sent to a Function App for it to validate the request was made by a trusted Azure AD device.'
+    Description = 'Provides a set of functions to construct a valid header body sent to a Function App for it to validate the request was made by a trusted Entra ID device.'
     
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.0'
