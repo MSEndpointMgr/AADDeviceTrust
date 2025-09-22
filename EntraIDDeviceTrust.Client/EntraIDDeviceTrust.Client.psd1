@@ -11,7 +11,7 @@
     RootModule = 'EntraIDDeviceTrust.Client.psm1'
     
     # Version number of this module.
-    ModuleVersion = '1.0.0'
+    ModuleVersion = '1.0.1'
     
     # ID used to uniquely identify this module
     GUID = 'af365d4a-13bd-4323-a221-2d679922f0d2'

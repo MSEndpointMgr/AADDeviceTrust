@@ -1,13 +1,13 @@
-function New-AADDeviceTrustBody {
+function New-EntraIDDeviceTrustBody {
     <#
     .SYNOPSIS
-        Construct the body with the elements for a sucessful device trust validation required by a Function App that's leveraging the AADDeviceTrust.FunctionApp module.
+        Construct the body with the elements for a sucessful device trust validation required by a Function App that's leveraging the EntraIDDeviceTrust.FunctionApp module.
 
     .DESCRIPTION
-        Construct the body with the elements for a sucessful device trust validation required by a Function App that's leveraging the AADDeviceTrust.FunctionApp module.
+        Construct the body with the elements for a sucessful device trust validation required by a Function App that's leveraging the EntraIDDeviceTrust.FunctionApp module.
 
     .EXAMPLE
-        .\New-AADDeviceTrustBody.ps1
+        .\New-EntraIDDeviceTrustBody.ps1
 
     .NOTES
         Author:      Nickolaj Andersen
@@ -22,15 +22,15 @@ function New-AADDeviceTrustBody {
     param()
     Process {
         # Retrieve required data for building the request body
-        $AzureADDeviceID = Get-AzureADDeviceID
-        $CertificateThumbprint = Get-AzureADRegistrationCertificateThumbprint
-        $Signature = New-RSACertificateSignature -Content $AzureADDeviceID -Thumbprint $CertificateThumbprint
+        $EntraIDDeviceID = Get-EntraIDDeviceID
+        $CertificateThumbprint = Get-EntraIDRegistrationCertificateThumbprint
+        $Signature = New-RSACertificateSignature -Content $EntraIDDeviceID -Thumbprint $CertificateThumbprint
         $PublicKeyBytesEncoded = Get-PublicKeyBytesEncodedString -Thumbprint $CertificateThumbprint
 
         # Construct client-side request header
         $BodyTable = [ordered]@{
             DeviceName = $env:COMPUTERNAME
-            DeviceID = $AzureADDeviceID
+            DeviceID = $EntraIDDeviceID
             Signature = $Signature
             Thumbprint = $CertificateThumbprint
             PublicKey = $PublicKeyBytesEncoded
